@@ -230,6 +230,65 @@ var saveTasks = function () {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+var loadTasks = function () {
+  tasks = localStorage.getItem("tasks");
+  console.log(tasks);
+  if (tasks === null) {
+    tasks = [];
+    return false;
+  }
+
+  tasks = JSON.parse(tasks);
+  console.log(tasks);
+
+  for (var i = 0; i < tasks.length; i++) {
+    console.log(tasks[i]);
+    taskIdCounter = tasks[i];
+    console.log(tasks[i]);
+
+    listItemEl = document.createElement("li");
+    listItemEl.className = "task-item";
+    listItemEl.setAttribute("data-task-id", tasks[i].id);
+    taskInfoEl = document.createElement("div");
+    taskInfoEl.className = "task-info";
+    taskInfoEl.innerHTML =
+      "<h3 class='task-name'>" +
+      tasks[i].name +
+      "</h3><span class='task-type'>" +
+      tasks[i].type +
+      "</span>";
+    listItemEl.appendChild(taskInfoEl);
+    // create task actions (buttons and select) for task
+    taskActionsEl = createTaskActions(tasks[i].id);
+    listItemEl.appendChild(taskActionsEl);
+    //tasksToDoEl.appendChild(listItemEl);
+    console.log(listItemEl);
+
+    if (tasks[i].status === "to do") {
+      listItemEl.querySelector(
+        "select[name='status-change']"
+      ).selectedIndex = 0;
+      listItemEl.appendChild(tasksToDoEl);
+    } else if (tasks[i].status === "in progress") {
+      listItemEl.querySelector(
+        "select[name='status-change']"
+      ).selectedIndex = 1;
+      listItemEl.appendChild(tasksInProgressEl);
+    } else if (tasks[i].status === "complete") {
+      listItemEl.querySelector(
+        "select[name='status-change']"
+      ).selectedIndex = 2;
+      listItemEl.appendChild(tasksCompletedEl);
+    }
+    taskIdCounter++;
+  }
+
+  // taskDataObj.id = taskIdCounter;
+  // tasks.push(taskDataObj);
+  // // increase task counter for next unique id
+  // taskIdCounter++;
+};
+
 // Create a new task
 formEl.addEventListener("submit", taskFormHandler);
 
@@ -238,3 +297,5 @@ pageContentEl.addEventListener("click", taskButtonHandler);
 
 // for changing the status
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+
+loadTasks();
